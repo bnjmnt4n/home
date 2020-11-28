@@ -27,5 +27,26 @@
         ];
       };
     };
+
+    # Based on https://github.com/nix-community/home-manager/issues/1510#issuecomment-735034668.
+    homeConfigurations = {
+      wsl = inputs.home-manager.lib.homeManagerConfiguration {
+        configuration = { ... }: {
+          _module.args.inputs = inputs;
+          imports = [
+            ./modules/overlays.nix
+            ./hosts/wsl/home.nix
+          ];
+        };
+        system = "x86_64-linux";
+        homeDirectory = "/home/bnjmnt4n";
+        username = "bnjmnt4n";
+      };
+    };
+
+    wsl = self.homeConfigurations.wsl.activationPackage;
+    defaultPackage = {
+      x86_64-linux = self.homeConfigurations.wsl.activationPackage;
+    };
   };
 }
